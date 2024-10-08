@@ -1,0 +1,18 @@
+version: "3.8"
+
+name: "mingle"
+
+services:
+  test-db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=test_db
+
+    # env_file: .env.db
+    # volumes:
+    #   - ~/workspace/db/data/:/var/lib/postgresql/data/
+    restart: always
