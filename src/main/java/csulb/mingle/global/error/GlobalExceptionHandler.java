@@ -1,7 +1,7 @@
 package csulb.mingle.global.error;
 
 import csulb.mingle.global.error.exception.BaseException;
-import csulb.mingle.global.util.Message;
+import csulb.mingle.global.common.dto.response.ResponseMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,13 +18,13 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity<Message>
      */
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<Message> handelBaseException(BaseException e) {
-        Message message = new Message(
+    public ResponseEntity<ResponseMessage> handelBaseException(BaseException e) {
+        ResponseMessage responseMessage = new ResponseMessage(
                 e.getExceptionType().getErrorMessage(),
                 e.getExceptionType().getStatusCode()
         );
         return new ResponseEntity<>(
-                message,
+                responseMessage,
                 e.getExceptionType().getHttpStatus()
         );
     }
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity<Message>
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Message> handleValidationExceptions(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ResponseMessage> handleValidationExceptions(MethodArgumentNotValidException exception) {
 
         // @Valid에서 넘어온 에러메세지 추출
         String errorMessage = exception.getBindingResult()
@@ -45,9 +45,9 @@ public class GlobalExceptionHandler {
                 .getDefaultMessage();
 
         // 에러메세지를 담은 응답 메세지 형성
-        Message message = new Message(errorMessage, 400);
+        ResponseMessage responseMessage = new ResponseMessage(errorMessage, 400);
         return new ResponseEntity<>(
-                message,
+                responseMessage,
                 HttpStatus.BAD_REQUEST
         );
     }
