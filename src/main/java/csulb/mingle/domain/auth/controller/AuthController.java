@@ -43,11 +43,12 @@ public class AuthController {
                 .body(message);
     }
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<ResponseMessage> signup(@Valid @RequestBody SignUpRequest request) {
-//        SignupResponse response = authService.signup(request);
-//        ResponseMessage message = new ResponseMessage(response, HttpStatus.CREATED.value());
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body(message);
-//    }
+    @PostMapping("/signup")
+    public ResponseEntity<ResponseMessage> signup(@Valid @RequestBody SignUpRequest request) {
+        SignupResponse response = authService.signup(request);
+
+        ResponseMessage message = new ResponseMessage(response, HttpStatus.CREATED.value());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(message);
+    }
 }

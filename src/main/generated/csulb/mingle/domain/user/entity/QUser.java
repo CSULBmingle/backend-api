@@ -28,21 +28,13 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath firstname = createString("firstname");
 
-    public final DatePath<java.time.LocalDate> graduationYear = createDate("graduationYear", java.time.LocalDate.class);
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath lastname = createString("lastname");
 
-    public final StringPath major = createString("major");
-
-    public final StringPath minor = createString("minor");
-
     public final StringPath password = createString("password");
 
     public final DateTimePath<java.time.LocalDateTime> passwordChangedAt = createDateTime("passwordChangedAt", java.time.LocalDateTime.class);
-
-    public final StringPath studentId = createString("studentId");
 
     public final StringPath username = createString("username");
 

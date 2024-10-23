@@ -26,4 +26,8 @@ public class RedisUtil {
         Duration expireDuration = Duration.ofMinutes(duration);
         valueOperations.set(key, value, expireDuration);
     }
+
+     public void deleteData(String key){
+        valueOperations.getOperations().delete(key);
+    }
 }

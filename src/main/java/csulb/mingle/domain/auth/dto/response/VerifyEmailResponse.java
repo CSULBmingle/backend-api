@@ -1,10 +1,11 @@
 package csulb.mingle.domain.auth.dto.response;
 
-import lombok.Builder;
-
 public record VerifyEmailResponse(
 
         String email,
         boolean isSuccess
 ) {
+    public static VerifyEmailResponse from(String email, boolean isSuccess) {
+        return new VerifyEmailResponse(email, isSuccess);
+    }
 }

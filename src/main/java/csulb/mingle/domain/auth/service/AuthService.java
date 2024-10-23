@@ -1,9 +1,14 @@
 package csulb.mingle.domain.auth.service;
 
+import csulb.mingle.domain.auth.dto.request.SignUpRequest;
 import csulb.mingle.domain.auth.dto.request.VerifyEmailRequest;
+import csulb.mingle.domain.auth.dto.response.SignupResponse;
 import csulb.mingle.domain.auth.dto.response.VerifyEmailResponse;
 import csulb.mingle.domain.auth.exception.AuthException;
 import csulb.mingle.domain.auth.exception.AuthExceptionType;
+import csulb.mingle.domain.user.entity.User;
+import csulb.mingle.domain.user.exception.UserException;
+import csulb.mingle.domain.user.exception.UserExceptionType;
 import csulb.mingle.domain.user.repository.UserRepository;
 import csulb.mingle.global.util.redis.RedisUtil;
 import jakarta.transaction.Transactional;
@@ -17,52 +22,54 @@ import static csulb.mingle.global.util.redis.RedisConstants.*;
 @RequiredArgsConstructor
 public class AuthService {
 
-    public static final String VERIFIED_EMAIL = "verified:";
-
+    private final BcryptService bcryptService;
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
 
-//    public SignupResponse signup(SignUpRequest request) {
-//
-//        validateVerifiedEmail(request);
-//
-//        String encodedPassword = bcryptService.encodeBcrypt(request.getPassword());
-//        User user = request.toUser(encodedPassword);
-//        userRepository.save(user);
-//
-//        // 인증 정보 삭제
-//        redisTemplate.delete("verified:" + request.getEmail());
-//
-//        return SignupResponse.from(user);
-//    }
+    public SignupResponse signup(SignUpRequest request) {
+        validateVerifiedEmail(request);
+
+        String encodedPassword = bcryptService.encodeBcrypt(request.password());
+        User user = request.toUser(encodedPassword);
+        userRepository.save(user);
+
+        redisUtil.deleteData(VERIFIED_PREFIX + request.email());
+
+        return SignupResponse.of(
+                user.getFirstname(),
+                user.getLastname(),
+                user.getUsername(),
+                user.getEmail());
+    }
 
     public VerifyEmailResponse verifyEmail(VerifyEmailRequest request) {
         String storedCode = redisUtil.getData(UNVERIFIED_PREFIX + request.email());
-        verifyUnexpiredCode(storedCode);
-        verifyRightCode(request, storedCode);
+
+        validateUnexpiredCode(storedCode);
+        validateRightCode(request, storedCode);
+
         redisUtil.setDataExpire(VERIFIED_PREFIX + request.email(), "true", VERIFIED_USER_DURATION_MINUTES);
-        return new VerifyEmailResponse(request.email(), true);
+        return VerifyEmailResponse.from(request.email(), true);
     }
 
-    private void verifyUnexpiredCode(String storedCode) {
+    private void validateUnexpiredCode(String storedCode) {
         if (storedCode == null) {
             throw new AuthException(AuthExceptionType.EXPIRED_VERIFICATION_CODE);
         }
     }
 
-    private void verifyRightCode(VerifyEmailRequest request, String storedCode) {
+    private void validateRightCode(VerifyEmailRequest request, String storedCode) {
         if (!storedCode.equals(request.verificationCode())) {
             throw new AuthException(AuthExceptionType.WRONG_VERIFICATION_CODE);
         }
     }
 
+    private void validateVerifiedEmail(SignUpRequest request) {
+        String verified = redisUtil.getData(VERIFIED_PREFIX + request.email());
 
-//    private void validateVerifiedEmail(SignUpRequest request) {
-//        String verified = redisTemplate.opsForValue().get(VERIFIED_EMAIL + request.email());
-//
-//        if (verified == null) {
-//            throw new UserException(UserExceptionType.NEED_VERIFIED_EMAIL);
-//        }
-//    }
+        if (verified == null) {
+            throw new UserException(UserExceptionType.NEED_VERIFIED_EMAIL);
+        }
+    }
 
 }

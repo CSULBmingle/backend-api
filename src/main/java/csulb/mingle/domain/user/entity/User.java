@@ -39,17 +39,17 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true, length = 30)
     private String username;
 
-    @Column(nullable = false, length = 50)
-    private String major;
-
-    @Column(nullable = false, length = 50)
-    private String minor;
-
-    @Column(name = "graduation_year", nullable = false)
-    private LocalDate graduationYear;
-
-    @Column(name = "student_id", nullable = false, length = 50)
-    private String studentId;
+//    @Column(nullable = false, length = 50)
+//    private String major;
+//
+//    @Column(nullable = false, length = 50)
+//    private String minor;
+//
+//    @Column(name = "graduation_year", nullable = false)
+//    private LocalDate graduationYear;
+//
+//    @Column(name = "student_id", nullable = false, length = 50)
+//    private String studentId;
 
     @Column(name = "password_changed_at")
     private LocalDateTime passwordChangedAt;
@@ -62,10 +62,10 @@ public class User extends BaseTimeEntity {
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
-        this.major = major;
-        this.minor = minor;
-        this.graduationYear = graduationYear;
-        this.studentId = studentId;
+//        this.major = major;
+//        this.minor = minor;
+//        this.graduationYear = graduationYear;
+//        this.studentId = studentId;
         this.passwordChangedAt = LocalDateTime.now();
     }
 }
