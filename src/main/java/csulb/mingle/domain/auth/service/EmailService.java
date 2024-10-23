@@ -5,7 +5,7 @@ import csulb.mingle.domain.auth.exception.AuthExceptionType;
 import csulb.mingle.domain.user.exception.UserException;
 import csulb.mingle.domain.user.exception.UserExceptionType;
 import csulb.mingle.domain.user.repository.UserRepository;
-import csulb.mingle.global.error.exception.BaseException;
+import csulb.mingle.global.util.redis.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
@@ -18,6 +18,9 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.security.SecureRandom;
 
+import static csulb.mingle.global.util.redis.RedisConstants.UNVERIFIED_PREFIX;
+import static csulb.mingle.global.util.redis.RedisConstants.VERIFIED_CODE_DURATION_MINUTES;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -28,7 +31,7 @@ public class EmailService {
     private final JavaMailSender emailSender;
     private final SpringTemplateEngine templateEngine;
     private final UserRepository userRepository;
-//    private final RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
 
     public void sendVerificationEmail(String email) {
@@ -37,6 +40,8 @@ public class EmailService {
             String verificationCode = createRandomCode();
             MimeMessage mimeMessage = createEmailForm(email, verificationCode);
             emailSender.send(mimeMessage);
+
+            redisUtil.setDataExpire(UNVERIFIED_PREFIX + email, verificationCode, VERIFIED_CODE_DURATION_MINUTES);
         } catch (MessagingException e) {
             throw new AuthException(AuthExceptionType.EMAIL_SEND_FAILED);
         }
@@ -73,6 +78,6 @@ public class EmailService {
     private String setContext(String verificationCode) {
         Context context = new Context();
         context.setVariable("verificationCode", verificationCode);
-        return templateEngine.process("mail/verification-email",context);
+        return templateEngine.process("mail/verification-email", context);
     }
 }

@@ -1,6 +1,8 @@
 package csulb.mingle.domain.auth.controller;
 
 import csulb.mingle.domain.auth.dto.request.SendEmailRequest;
+import csulb.mingle.domain.auth.dto.request.VerifyEmailRequest;
+import csulb.mingle.domain.auth.dto.response.VerifyEmailResponse;
 import csulb.mingle.domain.auth.service.AuthService;
 import csulb.mingle.domain.auth.service.EmailService;
 import csulb.mingle.domain.auth.dto.request.SignUpRequest;
@@ -20,22 +22,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-//    private final AuthService authService;
+    private final AuthService authService;
     private final EmailService emailService;
 
     @PostMapping("/email/verification-request")
     public ResponseEntity<ResponseMessage> requestVerification(@Valid @RequestBody SendEmailRequest request) {
         emailService.sendVerificationEmail(request.email());
+
         ResponseMessage message = new ResponseMessage(null, HttpStatus.OK.value());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(message);
     }
 
-//    @PostMapping("/email/verify")
-//    public ResponseEntity<ResponseMessage> verifyEmail(@RequestBody VerifyEmailRequest request) {
-//        authService.verifyEmail(request);
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("/email/verify")
+    public ResponseEntity<ResponseMessage> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+        VerifyEmailResponse response = authService.verifyEmail(request);
+
+        ResponseMessage message = new ResponseMessage(response, HttpStatus.OK.value());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(message);
+    }
 
 //    @PostMapping("/signup")
 //    public ResponseEntity<ResponseMessage> signup(@Valid @RequestBody SignUpRequest request) {
