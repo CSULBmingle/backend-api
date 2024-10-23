@@ -2,6 +2,7 @@ package csulb.mingle.domain.user.entity;
 
 import csulb.mingle.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SoftDelete;
@@ -52,4 +53,19 @@ public class User extends BaseTimeEntity {
 
     @Column(name = "password_changed_at")
     private LocalDateTime passwordChangedAt;
+
+    @Builder
+
+    private User(String email, String password, String firstname, String lastname, String username, String major, String minor, LocalDate graduationYear, String studentId, LocalDateTime passwordChangedAt) {
+        this.email = email;
+        this.password = password;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.major = major;
+        this.minor = minor;
+        this.graduationYear = graduationYear;
+        this.studentId = studentId;
+        this.passwordChangedAt = LocalDateTime.now();
+    }
 }
