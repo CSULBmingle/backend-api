@@ -1,6 +1,7 @@
 package csulb.mingle.domain.timetable.controller;
 
 import csulb.mingle.domain.timetable.dto.request.CreateAndUpdateTimeTableRequestDto;
+import csulb.mingle.domain.timetable.dto.request.UpdatePriorityRequestDto;
 import csulb.mingle.domain.timetable.dto.response.TimeTableListResponseDto;
 import csulb.mingle.domain.timetable.dto.response.TimeTableResponseDto;
 import csulb.mingle.domain.timetable.service.TimeTableService;
@@ -55,9 +56,19 @@ public class TimeTableController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    @PutMapping("/{id}/priority")
+    public ResponseEntity<TimeTableResponseDto> updateTimeTablePriority(@PathVariable("id") Integer id,
+                                                                        @Valid @RequestBody UpdatePriorityRequestDto requestDto) {
+        // 순서 조정
+        TimeTableResponseDto responseDto = timeTableService.updateTimeTablePriority(id, requestDto.getPriority());
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteTimeTable(@PathVariable("id") Integer id) {
         // 권한 체크
+        // 뒤에있는 것들 순서 한칸씩 앞으로 당기기
         timeTableService.deleteTimeTable(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

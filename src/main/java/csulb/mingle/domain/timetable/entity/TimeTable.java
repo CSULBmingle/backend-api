@@ -31,6 +31,9 @@ public class TimeTable {
 
     // user
 
+    @Column
+    private int priority;
+
     public TimeTableResponseDto toResponseDto() {
         return TimeTableResponseDto.builder()
                 .id(id)

@@ -32,7 +32,7 @@ public class TimeTableService {
     public TimeTableResponseDto getTimeTable(int id) {
         TimeTable timeTable = timeTableRepository.findById(id)
                 .orElseThrow(TimeTableNotFoundException::new);
-        
+
         return timeTable.toResponseDto();
     }
 
@@ -41,6 +41,16 @@ public class TimeTableService {
                 .orElseThrow(TimeTableNotFoundException::new);
         timeTable.setName(newName);
         timeTableRepository.save(timeTable);
+
+        return timeTable.toResponseDto();
+    }
+
+    public TimeTableResponseDto updateTimeTablePriority(int id, int newPriority) {
+        // 유저가 가진 timetable 목록 확인
+        TimeTable timeTable = timeTableRepository.findById(id)
+                .orElseThrow(TimeTableNotFoundException::new);
+
+        timeTableRepository.updatePriorityById(id, newPriority);
 
         return timeTable.toResponseDto();
     }
