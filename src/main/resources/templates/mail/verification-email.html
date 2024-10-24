@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<div style='margin:20px;'>
+    <h1> Please enter your verification code in your Mingle app when prompted.</h1>
+    <br>
+    <p>This code will expire after 10 minutes.</p>
+    <br>
+
+    <div align="center" style="border:1px solid black; font-family:verdana;">
+        <h3 style="color:blue"> verification-code </h3>
+        <div style="font-size:130%" th:text="${verificationCode}"></div>
+    </div>
+    <br/>
+</div>
+
+</body>
+</html>
